@@ -1,4 +1,4 @@
-# Exercise 1 - Maths Quiz
+# Exercise 1 - Maths Quiz - 6 Nov
 
 Develop a GUI using Tkinter that presents the user with quiz of arithmetic problems. Each "play" of the quiz should be 10 questions. The user should initially be presented with a short menu of options to select a difficulty level. It could look something like this:
 
@@ -22,8 +22,8 @@ The program should include the functions listed below. These functions should ma
 - **displayMenu**: A function that displays the difficulty level menu at the beginning of the quiz.
 - **randomInt**: A function that determines the values used in each question. The min and max values of the numbers should be based on the difficulty level chosen as described above.
 - **decideOperation**: A function that randomly decides whether the problem is an addition or subtraction problem and returns a char.
-- displayProblem: A function that displays the question to the user and accepts their answer.
--** isCorrect**: A function that checks whether the users answer was correct and outputs an appropriate message
+- **displayProblem**: A function that displays the question to the user and accepts their answer.
+-**isCorrect**: A function that checks whether the users answer was correct and outputs an appropriate message
 - **displayResults**: function that outputs the users final score out of a possible 100 and ranks the user based on their score (e.g. A+ for a score over 90)
 
 &nbsp;
@@ -36,7 +36,7 @@ Once the user has finished the quiz, prompt them to see if they'd like to play i
 - Use Buttons for submitting answers, selecting difficulty, and replaying.
 - Use Label/messagebox to display results or feedback messages.
 
-# Exercise 2 - Alexa tell me a Joke
+# Exercise 2 - Alexa tell me a Joke - 13 Nov
 
 The randomJokes.txt file in the resources folder contains a dataset of random jokes. Each joke is on a new line and consists of a setup and punchline separated by a question mark. For example:
 
@@ -52,7 +52,7 @@ Develop a Tkinter GUI application that acts like a joke-telling assistant. The p
 - Additionally , provide a "Quit" button to close the application.
 
 &nbsp;
-# Exercise 3 - Student Manager
+# Exercise 3 - Student Manager - 20 Nov
 
 A list of student marks are held in the studentMarks.txt file available in the resources folder. These need to be loaded into a program to analyse the data. The first line is a single integer that gives the number of students in the class. Each subsequent line of the file comprises a student code (between 1000 and 9999), three course marks (each out of 20) and an examination mark (out of 100).
 
