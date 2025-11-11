@@ -1,4 +1,4 @@
-# Make Main Menu Frame and Play Fram
+# Make Main Menu Frame and Play Frame
 
 from tkinter import *
 import random as rd
@@ -10,27 +10,35 @@ main.resizable(0,0)
 main.title("Maths Quiz")
 main.configure(background="gray")
 
-mainMenuFrame = Frame(main, background="white")
+mainMenuFrame = Frame(main, background="pink")
+playFrame = Frame(main, background="gold")
 
-for frame in mainMenuFrame:
-    frame.place()
+for frame in (mainMenuFrame, playFrame):
+    frame.place(relwidth=1, relheight=1)
 
-mainMenuButton = Button(mainMenuFrame, text="Main Menu", command=lambda x: switch_frame(mainMenuFrame))
+mainMenuButton = Button(playFrame, text="Main Menu", command=lambda: switch_frame(mainMenuFrame))
 mainMenuButton.place(x=100, y=500, anchor=CENTER)
 
-feedbackLabel = Label(main, text="Welcome")
+feedbackLabel = Label(playFrame, text="Welcome")
 feedbackLabel.place(x=400, y=225, anchor=CENTER)
 
-displayProblemLabel = Label(main, text="Welcome")
+displayProblemLabel = Label(playFrame, text="Welcome")
 displayProblemLabel.place(x=400, y=250, anchor=CENTER)
 
-displayScoreLabel = Label(main, text="Score: ")
-displayScoreLabel.place(x=300, y=300, anchor=CENTER)
+displayScoreLabel = Label(playFrame, text="Score: ")
+displayScoreLabel.place(x=275, y=300, anchor=CENTER)
 
 correct_answer = None
 attempt_count = 0
 problem_count = 0
 score = 0
+difficulty = 0
+
+def set_diff(diff, color):
+    global difficulty
+    difficulty = diff
+    playFrame.config(background=color)
+    switch_frame(playFrame)
 
 def switch_frame(frame):
     frame.tkraise()
@@ -38,8 +46,16 @@ def switch_frame(frame):
 def displayProblem():
     global correct_answer
     rdOperator = rd.choice((True, False))
-    rdInt1 = rd.randint(1, 9)
-    rdInt2 = rd.randint(1, 9)
+
+    if difficulty == 1:
+        rdInt1 = rd.randint(1, 9)
+        rdInt2 = rd.randint(1, 9)    
+    elif difficulty == 2:
+        rdInt1 = rd.randint(1, 99)
+        rdInt2 = rd.randint(1, 99)
+    else:
+        rdInt1 = rd.randint(1, 9999)
+        rdInt2 = rd.randint(1, 9999)
 
     if rdOperator:
         correct_answer = rdInt1 + rdInt2
@@ -64,7 +80,7 @@ def isCorrect():
         attempt_count = 0
         problem_count += 1
         displayProblem()
-        
+    
     else:
         feedbackLabel.config(text="Try again", bg="red")
         attempt_count += 1
@@ -80,14 +96,23 @@ def isCorrect():
         submitBtn.place_forget()
         displayScoreLabel.config(text=f"Total score: {score}")
 
-e1 = Entry(main)
+e1 = Entry(playFrame)
 e1.place(x=400, y=300, anchor=CENTER)
 
-submitBtn = Button(main, text="Submit", command=isCorrect)
-submitBtn.place(x=500, y=300, anchor=CENTER)
+submitBtn = Button(playFrame, text="Submit", command=isCorrect)
+submitBtn.place(x=525, y=300, anchor=CENTER)
 
-displayProblemButton = Button(main, text="Display Problem", command=displayProblem)
+displayProblemButton = Button(playFrame, text="Display Problem", command=lambda: displayProblem())
 displayProblemButton.place(x=400, y=350, anchor=CENTER)
+
+playButton = Button(mainMenuFrame, text="Easy", command=lambda: [switch_frame(playFrame), set_diff(1, "green")])
+playButton.place(x=400, y=275, anchor=CENTER)
+
+playButton = Button(mainMenuFrame, text="Medium", command=lambda: [switch_frame(playFrame), set_diff(2, "yellow")])
+playButton.place(x=400, y=300, anchor=CENTER)
+
+playButton = Button(mainMenuFrame, text="Hard", command=lambda: [switch_frame(playFrame), set_diff(3, "red")])
+playButton.place(x=400, y=325, anchor=CENTER)
 
 switch_frame(mainMenuFrame)
 
