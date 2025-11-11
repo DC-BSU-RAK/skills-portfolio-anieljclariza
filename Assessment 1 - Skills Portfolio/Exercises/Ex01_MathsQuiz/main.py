@@ -1,3 +1,5 @@
+# Make Main Menu Frame and Play Fram
+
 from tkinter import *
 import random as rd
 
