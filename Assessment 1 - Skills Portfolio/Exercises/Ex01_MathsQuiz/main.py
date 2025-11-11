@@ -1,59 +1,48 @@
-## import everything from the tkinter toolkit to use for this exercise
 from tkinter import *
 import random as rd
 
 main = Tk()
-main.geometry('800x800')
+
+main.geometry("800x600")
 main.resizable(0,0)
+main.title("Maths Quiz")
+main.configure(background="gray")
 
-mainMenu = Frame(main)
-easyFrame = Frame(main, bg='green')
-mediumFrame = Frame(main, bg='yellow')
+correct_answer = None
 
-for frame in (mainMenu, easyFrame, mediumFrame):
-    frame.place(width=800, height=600)
+def displayProblem():
+    global correct_answer
+    rdOperator = rd.choice((True, False))
+    rdInt1 = rd.randint(1, 9)
+    rdInt2 = rd.randint(1, 9)
 
-title = Label(mainMenu, text="Maths Quiz", font=('Arial', 25))
-title.place(x=400,y=100, anchor=CENTER)
+    if rdOperator:
+        correct_answer = rdInt1 + rdInt2
+        operator = "+"
+    else:
+        correct_answer = rdInt1 - rdInt2
+        operator = "-"
 
-programmer = Label(mainMenu, text="by Aniel-J Clariza :)", font=('Arial', 15))
-programmer.place(x=400, y=150, anchor=CENTER)
+    problem = f"What is {rdInt1} {operator} {rdInt2}?"
 
-def switch_frame(frame):    
-    frame.tkraise()
+    displayProblemLabel = Label(main, text=(problem))
+    displayProblemLabel.place(x=400, y=250, anchor=CENTER)
 
-easyModeButton = Button(mainMenu, text="Easy Difficulty", font=('', 15), bg='green', activebackground='lightgreen', command=lambda: switch_frame(easyFrame))
-easyModeButton.place(x=400, y=225, anchor=CENTER)
+def isCorrect():
+    if int(e1.get()) == correct_answer:
+        feedback = Label(main, text="Correct!")
+        feedback.place(x=300, y=300, anchor=CENTER)
+    else:
+        feedback = Label(main, text="Incorrect!")
+        feedback.place(x=300, y=300, anchor=CENTER)
+        
 
-mainMenuButton = Button(main, text='Main Menu', command=lambda: switch_frame(mainMenu))
-mainMenuButton.place(x=400, y=700, anchor=CENTER)
-
-randomIntEasy1 = rd.randint(1,9)
-randomIntEasy2 = rd.randint(1,9)
-randomOperator = rd.choice(('+', '-'))
-
-problem = (f"{randomIntEasy1} {randomOperator} {randomIntEasy2}")
-
-easyQuestion = Label(easyFrame, text=f"What is {problem}?")
-easyQuestion.place(x=400, y=200, anchor=CENTER)
-
-e1 = Entry(easyFrame)
+e1 = Entry(main)
 e1.place(x=400, y=300, anchor=CENTER)
 
-submitButton = Button(easyFrame)
+submitBtn = Button(main, text="Submit", command=isCorrect)
+submitBtn.place(x=500, y=300, anchor=CENTER)
 
-"""
-mediumModeButton = Button(mainMenu, text="Medium Difficulty", font=('', 15), bg='yellow', activebackground='lightyellow', command=lambda:switch_frame(mediumFrame))
-mediumModeButton.place(x=400, y=300, anchor=CENTER)
+displayProblemButton = Button(main, text="Display Problem", command=displayProblem).place(x=400, y=350, anchor=CENTER)
 
-mainMenuButton2 = Button(mediumFrame, text='Back to Main Menu', command=lambda: switch_frame(mainMenu))
-mainMenuButton2.place(x=400, y=500, anchor=CENTER)
-
-
-hardMode = Button(main, text="Hard Difficulty", font=('', 15), bg='red', activebackground='pink')
-hardMode.place(x=400, y=375, anchor=CENTER)
-"""
-
-switch_frame(mainMenu)
-
-main.mainloop()
+mainloop()
