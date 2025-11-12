@@ -16,7 +16,7 @@ for frame in (mainMenuFrame, playFrame):
 def switchFrame(frame):
     frame.tkraise()
 
-easyButton = Button(mainMenuFrame, text="Easy", activebackground="green")
+easyButton = Button(mainMenuFrame, text="Easy")
 easyButton.place(x=400, y=270, anchor=CENTER)
 
 mediumButton = Button(mainMenuFrame, text="Medium")
