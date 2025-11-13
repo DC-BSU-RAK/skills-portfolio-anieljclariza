@@ -1,12 +1,18 @@
+# Import necessities for program to work.
+    # tkinter for GUI
+    # random for random integer values
+    # PIL for placing a background image
 from tkinter import *
 import random as rd
 from PIL import Image, ImageTk
 
+# Main window creation
 main = Tk()
 main.geometry("800x600")
 main.resizable(0,0)
 main.title("Maths Quiz")
 
+# Background images to be used every frame and difficulty: Main Menu and Easy to Hard difficulties
 background_image = Image.open(r"Assessment 1 - Skills Portfolio\Exercises\Ex01_MathsQuiz\mainMenu.jpg")
 background_image = background_image.resize((800, 600))
 background_photo = ImageTk.PhotoImage(background_image)
@@ -23,14 +29,17 @@ hardDiffBackground = Image.open( r"Assessment 1 - Skills Portfolio\Exercises\Ex0
 hardDiffBackground = hardDiffBackground.resize((800, 600))
 hardDiffPhoto = ImageTk.PhotoImage(hardDiffBackground)
 
-# Frames ---
+# Main Menu Frame and Play Frame
 mainMenuFrame = Frame(main)
 playFrame = Frame(main, background="pink")
 
+# Place each frame and fill the whole window
 for frame in (mainMenuFrame, playFrame):
     frame.place(relwidth=1, relheight=1)
 
-# <--- Game State --->
+# < --- Game Stats --- >
+# This is the game stats dictionary for storing stats like the correct answer, number of attempts, question, etc.
+    # Used to modify the stats easier than using global variables in my opinion
 game = {
     "correct_answer": "",
     "attempt_count": 0,
@@ -41,9 +50,11 @@ game = {
 
 # <--- Functions --->
 
+    # Used for switching between main menu frame and play frame
 def switch_frame(frame):
     frame.tkraise()
 
+    # Resets the game stats to default every time the user goes back to the main menu
 def reset_game():
     game["correct_answer"] = ""
     game["attempt_count"] = 0
@@ -60,13 +71,14 @@ def reset_game():
     displayProblemButton.place(x=400, y=350, anchor=CENTER)
     submitButton.place(x=525, y=300, anchor=CENTER)
 
-def set_diff(diff, color):
+    # Sets the game difficulty according to the difficulty the user chose from the main menu
+def set_diff(diff):
     game["difficulty"] = int(diff)
-    playFrame.config(background=color)
 
+    # Displays the problem when the "Display Problem" button is clicked
 def display_problem():
-    rdOperator = rd.choice((True, False))
 
+        # Uses if-elif-else for diffrent difficulties based from the value in the game[] dictionary; 1 digit for easy, 2 digits for medium, and 4 digits for hard
     if game["difficulty"] == 1:
         rdInt1 = rd.randint(1, 9)
         rdInt2 = rd.randint(1, 9)
@@ -77,6 +89,9 @@ def display_problem():
         rdInt1 = rd.randint(1000, 9999)
         rdInt2 = rd.randint(1000, 9999)
     
+    # Randomly chooses between True or False, where True means '+' operator and False a '-' operator
+    rdOperator = rd.choice((True, False))
+        # Add or subtract the two integer values based on the rdOperator
     if rdOperator:
         rdOperator = '+'
         game["correct_answer"] = rdInt1 + rdInt2
@@ -84,8 +99,11 @@ def display_problem():
         rdOperator = '-'
         game["correct_answer"] = rdInt1 - rdInt2
     
+    # Displays the problem on the ProblemLabel created and make more changes to make text more readable
     problem = f"What is {rdInt1} {rdOperator} {rdInt2}"
     displayProblemLabel.config(text=problem, font=("Arial", 16, "bold"))
+
+    # Deletes the values, if any, in the answerEntry Entry field for a cleaner field
     answerEntry.delete(0, END)
 
 def is_correct():
@@ -161,13 +179,13 @@ displayProblemButton.place(x=400, y=350, anchor=CENTER)
 backGroundLabel = Label(mainMenuFrame, image=background_photo)
 backGroundLabel.place(x=0, y=0, relwidth=1, relheight=1)
 
-easyButton = Button(mainMenuFrame, text="Easy", command=lambda: [switch_frame(playFrame), set_diff(1, "green"), change_background(1)])
+easyButton = Button(mainMenuFrame, text="Easy", command=lambda: [switch_frame(playFrame), set_diff(1), change_background(1)])
 easyButton.place(x=400, y=270, anchor=CENTER)
 
-mediumButton = Button(mainMenuFrame, text="Medium", command=lambda: [switch_frame(playFrame), set_diff(2, "orange"), change_background(2)])
+mediumButton = Button(mainMenuFrame, text="Medium", command=lambda: [switch_frame(playFrame), set_diff(2), change_background(2)])
 mediumButton.place(x=400, y=300, anchor=CENTER)
 
-hardButton = Button(mainMenuFrame, text="Hard", command=lambda: [switch_frame(playFrame), set_diff(3, "red"), change_background(3)])
+hardButton = Button(mainMenuFrame, text="Hard", command=lambda: [switch_frame(playFrame), set_diff(3), change_background(3)])
 hardButton.place(x=400, y=330, anchor=CENTER)
 
 quitButton = Button(mainMenuFrame, text="Quit", command=lambda: exit())
