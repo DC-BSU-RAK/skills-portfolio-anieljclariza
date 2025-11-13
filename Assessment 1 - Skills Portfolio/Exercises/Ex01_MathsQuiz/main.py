@@ -106,6 +106,7 @@ def display_problem():
     # Deletes the values, if any, in the answerEntry Entry field for a cleaner field
     answerEntry.delete(0, END)
 
+# Checks whether the value in the entry field is correct, incorrect, or has ValueError
 def is_correct():
     try:
         user_answer = int(answerEntry.get())
@@ -113,6 +114,7 @@ def is_correct():
         feedbackLabel.config(text="Please enter a number!", background="orange")
         return
     
+    # Gives feedback if answer is correct and gives the appropriate score relative to the number of attempts used where 10 is awarded on first try and 5 for the second
     if user_answer == game["correct_answer"]:
         feedbackLabel.config(text="Correct✅!")
         if game["attempt_count"] < 1:
@@ -120,13 +122,17 @@ def is_correct():
         else:
             game["score"] += 5
         
+        # Moves to the next question
         game["question_number"] += 1
         displayScoreLabel.config(text=f"Question Number: {game['question_number']}")
         display_problem()
+
+        # Gives feedback if answer is wrong and increments the attempt count
     else:
         feedbackLabel.config(text="Try again🔄")
         game["attempt_count"] += 1
     
+        #
     if game["attempt_count"] > 1:
         feedbackLabel.config(text="No Attempts Left!", background="orange")
         game["attempt_count"] = 0
