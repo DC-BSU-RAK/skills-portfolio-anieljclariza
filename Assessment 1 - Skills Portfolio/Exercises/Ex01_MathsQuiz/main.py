@@ -92,7 +92,7 @@ def is_correct():
     try:
         user_answer = int(answerEntry.get())
     except ValueError:
-        feedbackLabel.config(text="Please enter a number!", bg="orange")
+        feedbackLabel.config(text="Please enter a number!", background="orange")
         return
     
     if user_answer == game["correct_answer"]:
