@@ -122,7 +122,7 @@ def is_correct():
         else:
             game["score"] += 5
         
-        # Moves to the next question
+        # Moves to the next question if answer is correct
         game["question_number"] += 1
         displayScoreLabel.config(text=f"Question Number: {game['question_number']}")
         display_problem()
@@ -132,7 +132,7 @@ def is_correct():
         feedbackLabel.config(text="Try again🔄")
         game["attempt_count"] += 1
     
-        #
+        # Gives feedback telling the user that they have no attempts left and then resets the attempt count and moves on to the next question
     if game["attempt_count"] > 1:
         feedbackLabel.config(text="No Attempts Left!", background="orange")
         game["attempt_count"] = 0
@@ -140,6 +140,7 @@ def is_correct():
         displayScoreLabel.config(text=f"Question Number: {game['question_number']}")
         display_problem()
 
+        # If all 10 questions are answered, displays "game over screen", score, and gratitude, removes some widgets, and changes the mainMenuButton text
     if game["question_number"] == 11:
         feedbackLabel.config(text="Game Over!", background="gray")
         displayProblemButton.place_forget()
