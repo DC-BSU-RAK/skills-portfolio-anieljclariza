@@ -6,15 +6,15 @@ from tkinter import *
 import random as rd
 from PIL import Image, ImageTk
 
-# Main window creation
+# Main tkinter window creation
 main = Tk()
 main.geometry("800x600")
 main.resizable(0,0)
 main.title("Maths Quiz")
 
 # Background images to be used every frame and difficulty: Main Menu and Easy to Hard difficulties
-background_image = Image.open(r"Assessment 1 - Skills Portfolio\Exercises\Ex01_MathsQuiz\mainMenu.jpg")
-background_image = background_image.resize((800, 600))
+background_image = Image.open(r"Assessment 1 - Skills Portfolio\Exercises\Ex01_MathsQuiz\mainMenu.jpg") # Opens the image file
+background_image = background_image.resize((800, 600)) # Resize to window size
 background_photo = ImageTk.PhotoImage(background_image)
 
 easyDiffBackground = Image.open( r"Assessment 1 - Skills Portfolio\Exercises\Ex01_MathsQuiz\1.jpg")
@@ -29,7 +29,7 @@ hardDiffBackground = Image.open( r"Assessment 1 - Skills Portfolio\Exercises\Ex0
 hardDiffBackground = hardDiffBackground.resize((800, 600))
 hardDiffPhoto = ImageTk.PhotoImage(hardDiffBackground)
 
-# Main Menu Frame and Play Frame
+# Main Menu Frame and Play Frame to be used later
 mainMenuFrame = Frame(main)
 playFrame = Frame(main, background="pink")
 
@@ -149,6 +149,7 @@ def is_correct():
         displayProblemLabel.config(text="Thanks for trying out my program!")
         mainMenuButton.config(text="Play Again or Exit")
 
+# changes the background according to the parameter entered, from easy to hard difficulties
 def change_background(diff):
     if diff == 1:
         playFrameBackground.config(image=easyDiffPhoto)
@@ -158,34 +159,48 @@ def change_background(diff):
         playFrameBackground.config(image=hardDiffPhoto)
 
 # <--- Play Frame Widgets --->
+    # This is the frame created when a player has chosen any from the 3 difficulties from the main menu
 playFrameBackground = Label(playFrame)
-playFrameBackground.place(x=0, y=0, relwidth=1, relheight=1)
+playFrameBackground.place(x=0, y=0, relwidth=1, relheight=1) # Fills the entire window
 
+    # This is the main menu button and if pressed runs two functions that switches to the main menu frame and resets the game stats
 mainMenuButton = Button(playFrame, text="Main Menu", command=lambda: [switch_frame(mainMenuFrame), reset_game()])
-mainMenuButton.place(x=400, y=500, anchor=CENTER)
+mainMenuButton.place(x=400, y=500, anchor=CENTER) # Places the button somewhere in bottom middle area
 
+    # This is the feedback label used to display feedback to the user 
+    # Gives a welcome message and sets the background according to the play frame's background
 feedbackLabel = Label(playFrame, text="Welcome to my Maths Quiz!", background=playFrame["background"])
-feedbackLabel.place(x=400, y=225, anchor=CENTER)
+feedbackLabel.place(x=400, y=225, anchor=CENTER) # Places the label somewhere in the middle top
 
+    # This is the display problem label where the problem is displayed.
+    # Also guides the user how to start the quiz
 displayProblemLabel = Label(playFrame, text='Press "Display Problem" to start', background=playFrame["background"])
-displayProblemLabel.place(x=400, y=250, anchor=CENTER)
+displayProblemLabel.place(x=400, y=250, anchor=CENTER) # Placed below the feedback label
 
-displayScoreLabel = Label(playFrame, text="Question Number: 1", background=playFrame["background"])
-displayScoreLabel.place(x=275, y=300, anchor=CENTER)
-
+    # This is the answer entry where the user will input the answer
 answerEntry = Entry(playFrame)
-answerEntry.place(x=400, y=300, anchor=CENTER)
+answerEntry.place(x=400, y=300, anchor=CENTER) # Placed in the middle of the frame
 
+    # This is the displayScoreLabel used for displaying the question number first and then the total score after game ends
+displayScoreLabel = Label(playFrame, text="Question Number: 1", background=playFrame["background"])
+displayScoreLabel.place(x=275, y=300, anchor=CENTER) # Placed at the left side of the entry frame
+
+    # This is the submit button used to submit the answer and runs the command "is_correct" to check if the answer is correct
 submitButton = Button(playFrame, text="Submit", command=is_correct)
 submitButton.place(x=525, y=300, anchor=CENTER)
 
+    # This is the display problem button used to display the problem by running the "display_problem()" function
 displayProblemButton = Button(playFrame, text="Display Problem", command=display_problem)
 displayProblemButton.place(x=400, y=350, anchor=CENTER)
 
-# <--- Main Menu Frame Widgets --->
-backGroundLabel = Label(mainMenuFrame, image=background_photo)
-backGroundLabel.place(x=0, y=0, relwidth=1, relheight=1)
 
+# <--- Main Menu Frame Widgets --->
+    # This is the background label used to put whatever background image photo is chosen
+backGroundLabel = Label(mainMenuFrame, image=background_photo)
+backGroundLabel.place(x=0, y=0, relwidth=1, relheight=1) # Configured to fill entire window space   
+
+    # These are the three difficulty buttons used for switching to the play frame by running the "switch_frame()" function
+    # Also runs the "setDiff()" and "change_background()" functions to set game difficulty and background
 easyButton = Button(mainMenuFrame, text="Easy", command=lambda: [switch_frame(playFrame), set_diff(1), change_background(1)])
 easyButton.place(x=400, y=270, anchor=CENTER)
 
@@ -198,7 +213,8 @@ hardButton.place(x=400, y=330, anchor=CENTER)
 quitButton = Button(mainMenuFrame, text="Quit", command=lambda: exit())
 quitButton.place(x=400, y=360, anchor=CENTER)
 
-# Start on Main Menu
+# Switches to main menu frame on program run
 switch_frame(mainMenuFrame)
 
+# Runs the tkinter event loop to display the tkinter window
 mainloop()
