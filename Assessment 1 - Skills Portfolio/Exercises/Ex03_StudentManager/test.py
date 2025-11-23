@@ -1,79 +1,159 @@
-from tkinter import *
-from tkinter import scrolledtext
+import tkinter as tk
+from tkinter import messagebox, simpledialog
 
-# File path
-filePath = r"Assessment 1 - Skills Portfolio\Exercises\Ex03_StudentManager\studentMarks.txt"
 
-# Read student data from file
-students = []
-with open(filePath, "r") as file:
-    for line in file:
-        parts = line.strip().split(",")
-        if len(parts) == 4:
-            name = parts[0].strip()
-            number = parts[1].strip()
-            coursework = float(parts[2].strip())
-            exam = float(parts[3].strip())
-            total = coursework + exam
-            percentage = (total / 160) * 100  # Total marks = 160
+# ----------------------------
+# Load Student File
+# ----------------------------
 
-            # Determine grade
-            if percentage >= 70:
-                grade = 'A'
-            elif percentage >= 60:
-                grade = 'B'
-            elif percentage >= 50:
-                grade = 'C'
-            elif percentage >= 40:
-                grade = 'D'
-            else:
-                grade = 'F'
+def load_students(filename=r"Assessment 1 - Skills Portfolio\Exercises\Ex03_StudentManager\studentMarks.txt"):
+    students = []
+    try:
+        with open(filename, "r") as f:
+            count = int(f.readline().strip())  # first line is number of students
+            for _ in range(count):
+                line = f.readline().strip()
+                if not line:
+                    continue
+                code, name, c1, c2, c3, exam = line.split(",")
 
-            students.append({
-                "name": name,
-                "number": number,
-                "coursework": coursework,
-                "exam": exam,
-                "total": total,
-                "percentage": percentage,
-                "grade": grade
-            })
+                c1, c2, c3, exam = int(c1), int(c2), int(c3), int(exam)
+                cw_total = c1 + c2 + c3
+                total = cw_total + exam  # out of 160
+                percent = (total / 160) * 100
 
-# Create main window
-main = Tk()
-main.title("Student Manager")
-main.geometry("1000x800")
+                # determine grade
+                if percent >= 70:
+                    grade = "A"
+                elif percent >= 60:
+                    grade = "B"
+                elif percent >= 50:
+                    grade = "C"
+                elif percent >= 40:
+                    grade = "D"
+                else:
+                    grade = "F"
 
-# Scrolled text area with monospaced font for alignment
-textArea = scrolledtext.ScrolledText(main, wrap=WORD, font=("Courier", 14))
-textArea.place(relx=0.01, rely=0.01, relwidth=0.98, relheight=0.95)
+                students.append({
+                    "code": code,
+                    "name": name,
+                    "cw_total": cw_total,
+                    "exam": exam,
+                    "percent": percent,
+                    "grade": grade
+                })
 
-# Function to view all students in formatted table
-def viewAll():
-    textArea.configure(state="normal")
-    textArea.delete('1.0', END)
-    
-    # Header
-    header = f"{'Name':20} {'Student No':12} {'Coursework':10} {'Exam':6} {'Total':6} {'%':7} {'Grade':6}\n"
-    textArea.insert(END, header)
-    textArea.insert(END, "-"*75 + "\n")
-    
-    # Student data
+    except FileNotFoundError:
+        messagebox.showerror("Error", "studentMarks.txt not found.")
+    return students
+
+
+students = load_students()
+
+
+# ----------------------------
+# Helper: Format Student Info
+# ----------------------------
+
+def format_student(s):
+    return (
+        f"Name: {s['name']}\n"
+        f"Student Number: {s['code']}\n"
+        f"Coursework Total: {s['cw_total']}\n"
+        f"Exam Mark: {s['exam']}\n"
+        f"Overall %: {s['percent']:.2f}%\n"
+        f"Grade: {s['grade']}\n"
+        f"{'-'*40}\n"
+    )
+
+
+# ----------------------------
+# Menu Functions
+# ----------------------------
+
+def view_all():
+    if not students:
+        messagebox.showerror("Error", "No student data loaded.")
+        return
+
+    output = ""
+    total_percent = 0
+
     for s in students:
-        line = f"{s['name']:20} {s['number']:12} {s['coursework']:10} {s['exam']:6} {s['total']:6} {s['percentage']:7.2f} {s['grade']:6}\n"
-        textArea.insert(END, line)
-    
-    # Summary
-    num_students = len(students)
-    avg_percentage = sum(s["percentage"] for s in students) / num_students if num_students > 0 else 0
-    textArea.insert(END, "\nClass Summary:\n")
-    textArea.insert(END, f"Number of Students: {num_students}\n")
-    textArea.insert(END, f"Average Percentage: {avg_percentage:.2f}%\n")
-    
-    textArea.configure(state="disabled")
+        output += format_student(s)
+        total_percent += s["percent"]
 
-# Button to view all students
-viewAllBtn = Button(main, text="View All Student Records", font=("Arial", 20), command=viewAll)
-viewAllBtn.place(x=500, y=750, anchor=CENTER)
+    avg_percent = total_percent / len(students)
+    output += f"\nTotal Students: {len(students)}\n"
+    output += f"Average Percentage: {avg_percent:.2f}%"
 
-main.mainloop()
+    text_box.delete("1.0", tk.END)
+    text_box.insert(tk.END, output)
+
+
+def view_individual():
+    if not students:
+        messagebox.showerror("Error", "No student data loaded.")
+        return
+
+    query = simpledialog.askstring(
+        "Search Student",
+        "Enter student name or student number:"
+    )
+
+    if not query:
+        return
+
+    query = query.lower()
+    for s in students:
+        if query in s["name"].lower() or query == s["code"]:
+            text_box.delete("1.0", tk.END)
+            text_box.insert(tk.END, format_student(s))
+            return
+
+    messagebox.showinfo("Not Found", "No matching student found.")
+
+
+def show_highest():
+    if not students:
+        return
+    best = max(students, key=lambda x: x["percent"])
+    text_box.delete("1.0", tk.END)
+    text_box.insert(tk.END, "Highest Scoring Student:\n\n")
+    text_box.insert(tk.END, format_student(best))
+
+
+def show_lowest():
+    if not students:
+        return
+    worst = min(students, key=lambda x: x["percent"])
+    text_box.delete("1.0", tk.END)
+    text_box.insert(tk.END, "Lowest Scoring Student:\n\n")
+    text_box.insert(tk.END, format_student(worst))
+
+
+# ----------------------------
+# Tkinter GUI Setup
+# ----------------------------
+
+root = tk.Tk()
+root.title("Student Marks Manager")
+root.geometry("650x500")
+
+frame = tk.Frame(root)
+frame.pack(pady=10)
+
+btn1 = tk.Button(frame, text="1. View All Students", width=25, command=view_all)
+btn2 = tk.Button(frame, text="2. View Individual Student", width=25, command=view_individual)
+btn3 = tk.Button(frame, text="3. Show Highest Score", width=25, command=show_highest)
+btn4 = tk.Button(frame, text="4. Show Lowest Score", width=25, command=show_lowest)
+
+btn1.grid(row=0, column=0, padx=5, pady=5)
+btn2.grid(row=1, column=0, padx=5, pady=5)
+btn3.grid(row=2, column=0, padx=5, pady=5)
+btn4.grid(row=3, column=0, padx=5, pady=5)
+
+text_box = tk.Text(root, width=70, height=20)
+text_box.pack(pady=10)
+
+root.mainloop()
