@@ -1,43 +1,50 @@
 import tkinter as tk # for gui
-from tkinter import simpledialog, messagebox # for query and message display
-import os # for file pathing
+from tkinter import simpledialog, messagebox # for query and text box
 
-# Main window creation and configuration
+# Create main window using tkinter
+    # Configure main window
 main = tk.Tk()
 main.title("Student Manager")
 main.geometry("1366x768")
 main.resizable(0,0)
 main.config(background="lightblue")
 
-# File path of student marks
+# file path of "studentMarks.txt"
 FILE_PATH = r"Assessment 1 - Skills Portfolio\Exercises\Ex03_StudentManager\studentMarks.txt"
 
-# --- Load Students ---
+# This function loads all the data from "studentMarks.txt" to be used by the program and also adds other student data such as grade, coursework total, total, and percentage
 def loadStudents(filePath=FILE_PATH):
-    students = []
-    if not os.path.exists(filePath):
-        return students
+    students = [] # Create empty dictionary
     
+    # Open the text file as "read-only" to access contents
     with open(filePath, "r") as file:
-        try:
-            class_count = int(file.readline().strip())
-        except ValueError:
-            class_count = 0
-
+        class_count = int(file.readline().strip())
+        
+        # Separate each value in every line in the text file by comma
         for _ in range(class_count):
             line = file.readline().strip()
-            if not line:
-                continue
+            
+            # put line values in respective variable
             student_number, name, course_mark1, course_mark2, course_mark3, exam_mark = line.split(",")
+
+            # convert marks to int
             course_mark1, course_mark2, course_mark3, exam_mark = map(int, (course_mark1, course_mark2, course_mark3, exam_mark))
+
+            # add marks in total
             coursework_total = course_mark1 + course_mark2 + course_mark3
             overall_total = coursework_total + exam_mark
+
+            # determine percentage based on total over total total attainable
             percentage = (overall_total / 160) * 100
+
+            # determine grade based on percentage
             if percentage >= 70: grade = 'A'
             elif percentage >= 60: grade = 'B'
             elif percentage >= 50: grade = 'C'
             elif percentage >= 40: grade = 'D'
             else: grade = 'F'
+
+            # add student values
             students.append({
                 "student_number": student_number,
                 "name": name,
@@ -51,9 +58,10 @@ def loadStudents(filePath=FILE_PATH):
             })
     return students
 
+# put student values in students dict
 students = loadStudents()
 
-# --- Save Students Back to File ---
+# write whatever changes made back into studentMarks.txt
 def saveStudents():
     with open(FILE_PATH, "w") as file:
         file.write(f"{len(students)}\n")
@@ -61,7 +69,7 @@ def saveStudents():
             line = f"{s['student_number']},{s['name']},{s['course_mark1']},{s['course_mark2']},{s['course_mark3']},{s['exam_mark']}\n"
             file.write(line)
 
-# --- Format Student for Display ---
+# this just formats the text box display for better readability
 def formatStudent(s):
     return(
         f"Name: {s['name']}\n"
@@ -74,14 +82,14 @@ def formatStudent(s):
         f"{'-'*40}\n"
     )
 
-# --- Display Output in TextBox ---
+# this outputs text in textbox
 def showOutput(text):
     text_box.config(state="normal")
     text_box.delete("1.0", tk.END)
     text_box.insert(tk.END, text)
     text_box.config(state="disabled")
 
-# --- View All Students ---
+# -this shows all student records
 def viewAll():
     output = ""
     total_percent = 0
@@ -94,31 +102,39 @@ def viewAll():
         output += f"Class Average Percentage: {avg_percentage:.2f}%"
     showOutput(output)
 
-# --- View Individual Student ---
+# view individual student record based on user input
 def viewIndividual():
+    # ask query for student name or student number
     query = simpledialog.askstring("Search Student", "Enter student name/student number:")
+
     if not query:
         return
+    
+    # make query lowercase for later 
     query = query.lower()
+
+    # output student record based on student
     for s in students:
         if query in s["name"].lower() or query == s["student_number"]:
             showOutput(formatStudent(s))
             return
     messagebox.showinfo("Not Found", "Student not found.")
 
-# --- Show Highest and Lowest ---
+# Show highest scorer using max() method with other code
 def showHighest():
     if not students: return
+
+    # Use max() method to find highest scorer in students dictionary and output properly
     highest = max(students, key=lambda x: x["percentage"])
     showOutput("Highest Scoring Student:\n\n" + formatStudent(highest))
 
+# Show lowest scorer using min() method with other code in students dictionary
 def showLowest():
     if not students: return
     lowest = min(students, key=lambda x: x["percentage"])
     showOutput("Lowest Scoring Student:\n\n" + formatStudent(lowest))
 
-# --- Sort Students ---
-# --- Expanded Sort Students ---
+# this sorts the student record based on user choice
 def sortStudents():
     if not students:
         messagebox.showinfo("No Data", "No students to sort.")
@@ -138,6 +154,7 @@ def sortStudents():
     if not field_choice:
         return
 
+    # sorting options
     field_map = {
         1: "name",
         2: "student_number",
@@ -147,6 +164,7 @@ def sortStudents():
         6: "exam_mark"
     }
 
+    # error checking
     field = field_map.get(field_choice)
     if not field:
         messagebox.showerror("Invalid Input", "Invalid choice.")
@@ -183,12 +201,16 @@ def sortStudents():
     output += f"Class Average Percentage: {avg_percentage:.2f}%"
     showOutput(output)
 
-# --- Add Student ---
+# this adds a student based on given details on the text file
 def addStudent():
     student_number = simpledialog.askstring("Add Student", "Enter Student Number:")
     if not student_number: return
+
+    # input name
     name = simpledialog.askstring("Add Student", "Enter Student Name:")
     if not name: return
+
+    # input scores
     try:
         course_mark1 = int(simpledialog.askstring("Add Student", "Enter Coursework Mark 1 (0-40):"))
         course_mark2 = int(simpledialog.askstring("Add Student", "Enter Coursework Mark 2 (0-40):"))
@@ -197,14 +219,20 @@ def addStudent():
     except (ValueError, TypeError):
         messagebox.showerror("Invalid Input", "Marks must be integer values.")
         return
+    
+    # calculate scores
     coursework_total = course_mark1 + course_mark2 + course_mark3
     overall_total = coursework_total + exam_mark
     percentage = (overall_total / 160) * 100
+
+    # determine grade
     if percentage >= 70: grade = 'A'
     elif percentage >= 60: grade = 'B'
     elif percentage >= 50: grade = 'C'
     elif percentage >= 40: grade = 'D'
     else: grade = 'F'
+
+    # add values
     students.append({
         "student_number": student_number,
         "name": name,
@@ -216,15 +244,23 @@ def addStudent():
         "percentage": percentage,
         "grade": grade
     })
+    # save student
     saveStudents()
     messagebox.showinfo("Success", f"Student {name} added successfully.")
+
+    # show all student records
     viewAll()
 
-# --- Delete Student ---
+# this deletes the student 
 def deleteStudent():
+    # asks for student name or number
     query = simpledialog.askstring("Delete Student", "Enter student name/student number:")
+
     if not query: return
-    query = query.lower()
+
+    query = query.lower() # make query lowercase for later
+
+    # deletes student and saves changes in text file
     for i, s in enumerate(students):
         if query in s["name"].lower() or query == s["student_number"]:
             confirm = messagebox.askyesno("Confirm Delete", f"Delete {s['name']}?")
@@ -236,11 +272,16 @@ def deleteStudent():
             return
     messagebox.showinfo("Not Found", "Student not found.")
 
-# --- Update Student ---
+# for the update student function
 def updateStudent():
+    # asks user for student name or number and stores in "query"
     query = simpledialog.askstring("Update Student", "Enter student name/student number:")
+
     if not query: return
-    query = query.lower()
+    
+    query = query.lower() # make query lowercase for later
+
+    # run for loop finding student and changing respective options
     for s in students:
         if query in s["name"].lower() or query == s["student_number"]:
             # Show sub-menu for which field to update
@@ -278,7 +319,7 @@ def updateStudent():
             return
     messagebox.showinfo("Not Found", "Student not found.")
 
-# --- GUI Components ---
+# text box creation and configuration
 text_box = tk.Text(main, font=("Arial", 16))
 text_box.pack(expand=True, fill="both", padx=10, pady=10)
 text_box.config(state="disabled")
@@ -286,7 +327,7 @@ text_box.config(state="disabled")
 frame = tk.Frame(main)
 frame.pack(pady=10)
 
-# --- Buttons Configuration ---
+# make a list containing button names and their function calls
 buttons = [
     ("1. View All Students", viewAll),
     ("2. View Individual Student", viewIndividual),
@@ -298,14 +339,13 @@ buttons = [
     ("8. Update Student", updateStudent),
 ]
 
-# How many buttons per row
+# how many buttons per row
 columns_per_row = 4
 
-# Place buttons in grid
+# place buttons in grid from buttons list above
 for i, (text, command) in enumerate(buttons):
     row = i // columns_per_row
     col = i % columns_per_row
     tk.Button(frame, text=text, font=("Arial",16), width=25, command=command).grid(row=row, column=col, padx=5, pady=5)
 
-# --- Start GUI ---
-main.mainloop()
+main.mainloop() # start gui
