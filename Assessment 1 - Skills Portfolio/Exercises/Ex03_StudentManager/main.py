@@ -34,7 +34,7 @@ def loadStudents(filePath=FILE_PATH):
             coursework_total = course_mark1 + course_mark2 + course_mark3
             overall_total = coursework_total + exam_mark
 
-            # determine percentage based on total over total total attainable
+            # determine percentage based on total over total attainable
             percentage = (overall_total / 160) * 100
 
             # determine grade based on percentage
@@ -44,7 +44,7 @@ def loadStudents(filePath=FILE_PATH):
             elif percentage >= 40: grade = 'D'
             else: grade = 'F'
 
-            # add student values
+            # add student record values
             students.append({
                 "student_number": student_number,
                 "name": name,
@@ -61,7 +61,7 @@ def loadStudents(filePath=FILE_PATH):
 # put student values in students dict
 students = loadStudents()
 
-# write whatever changes made back into studentMarks.txt
+# save data into "studentMarks.txt"
 def saveStudents():
     with open(FILE_PATH, "w") as file:
         file.write(f"{len(students)}\n")
@@ -203,19 +203,22 @@ def sortStudents():
 
 # this adds a student based on given details on the text file
 def addStudent():
+    # asks for student number of new student
     student_number = simpledialog.askstring("Add Student", "Enter Student Number:")
     if not student_number: return
 
-    # input name
+    # asks for name of new student
     name = simpledialog.askstring("Add Student", "Enter Student Name:")
     if not name: return
 
-    # input scores
+    # asks for marks of new student
     try:
         course_mark1 = int(simpledialog.askstring("Add Student", "Enter Coursework Mark 1 (0-40):"))
         course_mark2 = int(simpledialog.askstring("Add Student", "Enter Coursework Mark 2 (0-40):"))
         course_mark3 = int(simpledialog.askstring("Add Student", "Enter Coursework Mark 3 (0-40):"))
         exam_mark = int(simpledialog.askstring("Add Student", "Enter Exam Mark (0-40):"))
+
+    # catch any errors
     except (ValueError, TypeError):
         messagebox.showerror("Invalid Input", "Marks must be integer values.")
         return
@@ -232,7 +235,7 @@ def addStudent():
     elif percentage >= 40: grade = 'D'
     else: grade = 'F'
 
-    # add values
+    # add values of new student 
     students.append({
         "student_number": student_number,
         "name": name,
@@ -248,7 +251,7 @@ def addStudent():
     saveStudents()
     messagebox.showinfo("Success", f"Student {name} added successfully.")
 
-    # show all student records
+    # show all student records to verify changes
     viewAll()
 
 # this deletes the student 
@@ -272,7 +275,7 @@ def deleteStudent():
             return
     messagebox.showinfo("Not Found", "Student not found.")
 
-# for the update student function
+# changes student values
 def updateStudent():
     # asks user for student name or number and stores in "query"
     query = simpledialog.askstring("Update Student", "Enter student name/student number:")
@@ -289,6 +292,7 @@ def updateStudent():
                 "Update Menu",
                 "Choose field to update:\n1. Name\n2. Coursework Mark 1\n3. Coursework Mark 2\n4. Coursework Mark 3\n5. Exam Mark"
             )
+            # changes values based on which field user has chosesn to change
             if choice == 1:
                 new_name = simpledialog.askstring("Update", "Enter new name:")
                 if new_name: s["name"] = new_name
@@ -304,6 +308,7 @@ def updateStudent():
                 if choice == 5: s["exam_mark"] = new_mark
             else:
                 return
+            
             # Recalculate totals
             s["coursework_total"] = s["course_mark1"] + s["course_mark2"] + s["course_mark3"]
             overall_total = s["coursework_total"] + s["exam_mark"]
@@ -313,8 +318,12 @@ def updateStudent():
             elif s["percentage"] >= 50: s["grade"] = 'C'
             elif s["percentage"] >= 40: s["grade"] = 'D'
             else: s["grade"] = 'F'
+
+            # update studentMarks.txt
             saveStudents()
             messagebox.showinfo("Updated", f"Student {s['name']} updated successfully.")
+
+            # show all student records to verify changes
             viewAll()
             return
     messagebox.showinfo("Not Found", "Student not found.")
@@ -324,6 +333,7 @@ text_box = tk.Text(main, font=("Arial", 16))
 text_box.pack(expand=True, fill="both", padx=10, pady=10)
 text_box.config(state="disabled")
 
+# frame to put buttons on
 frame = tk.Frame(main)
 frame.pack(pady=10)
 
