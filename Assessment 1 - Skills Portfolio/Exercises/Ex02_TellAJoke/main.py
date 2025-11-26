@@ -1,6 +1,5 @@
-# Import tkinter for gui; json for .txt -> .json conversion, and random for choosing jokes randomly
+# Import tkinter for gui, and random for choosing jokes randomly
 from tkinter import *
-import json
 import random
 
 # Put contents of "randomJokes" inside text dictionary
